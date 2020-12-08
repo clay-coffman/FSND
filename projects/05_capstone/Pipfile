@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+toml = "*"
+black = "*"
+pylint = "*"
+
+[packages]
+gunicorn = "*"
+flask-script = "*"
+flask-migrate = "*"
+psycopg2-binary = "*"
+flask-cors = "*"
+jose = "*"
+python-dotenv = "*"
+pylint = "*"
+
+[requires]
+python_version = "3.8"
