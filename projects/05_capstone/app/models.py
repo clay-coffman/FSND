@@ -1,28 +1,41 @@
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String, Date, create_engine
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 from app import db
 
+
 """
-Users
+movies_actors join table
+"""
+# this is an association table for actors and movies... capturing 'roles' that actors have held in specific movies
+movies_actors = db.Table(
+    "movies_actors",
+    db.Column(
+        "movie_id", db.Integer, db.ForeignKey("movies.id"), primary_key=True
+    ),
+    db.Column(
+        "actor_id", db.Integer, db.ForeignKey("actors.id"), primary_key=True
+    ),
+)
+
+"""
+Actors
 """
 
 
-class User(db.Model):
-    __tablename__ = "users"
+class Actor(db.Model):
+    __tablename__ = "actors"
 
     id = Column(Integer, primary_key=True)
-    username = Column(String(80), unique=True, nullable=False)
-    first_name = Column(String(80))
-    last_name = Column(String(80))
-    email = Column(String(120), unique=True, nullable=False)
+    name = Column(String(120), nullable=False)
+    age = Column(Integer, nullable=False)
+    gender = Column(String(80), nullable=False)
 
-    def __init__(self, username, first_name, last_name, email):
-        self.username = username
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
+    def __init__(self, name, age, gender):
+        self.name = name
+        self.age = age
+        self.gender = gender
 
     def insert(self):
         db.session.add(self)
@@ -38,12 +51,48 @@ class User(db.Model):
     def format(self):
         return {
             "id": self.id,
-            "username": self.username,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "email": self.email,
+            "name": self.name,
+            "age": self.age,
+            "gender": self.gender,
         }
 
 
-# TODO add parlays
+"""
+Movies
+"""
 
+
+class Movie(db.Model):
+    __tablename__ = "movies"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(120), nullable=False)
+    release_date = Column(Date)
+    actors = db.relationship(
+        "Actor",
+        secondary=movies_actors,
+        backref=db.backref("movies", lazy="dynamic"),
+        lazy="dynamic",
+    )
+
+    def __init__(self, title, release_date):
+        self.title = title
+        self.release_date = release_date
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit(self)
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "release_date": self.release_date,
+        }

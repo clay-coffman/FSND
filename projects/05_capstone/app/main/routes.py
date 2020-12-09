@@ -1,19 +1,28 @@
 import os
 from flask import jsonify, abort, make_response, request
 from app import db
-from app.models import User
+from app.models import Movie, Actor
 from functools import wraps
 from jose import jwt
 
-# from app.models import User
 from app.main import bp
 
 # TODO move to config
 AUTH0_DOMAIN = "domain"
-API_AUDIENCE = MY_API_AUDIENCE
+API_AUDIENCE = "coffee-shop-endpoint"
 ALGORITHMS = ["RS256"]
 
-# from models import User
+
+# TODO routes
+# GET/ Actors and movies
+# DELETE/ Actors and movies
+# POST/ Actors and movies
+# PATCH/ Actors and movies
+
+# TODO roles
+# Casting Assistant - can view actors and movies
+# Casting Director - full crud for actors, update only for movies
+# Executive Producer - full crud for actors and movies
 
 
 @bp.route("/", methods=["GET"])
@@ -28,7 +37,6 @@ def get_users():
 
 
 @bp.route("/users", methods=["POST"])
-@requires_auth
 def create_user():
     if requires_scope("create:user"):
 
@@ -219,14 +227,14 @@ class GenericError(Exception):
         self.status_code = status_code
 
 
-@APP.errorhandler(AuthError)
+@app.errorhandler(AuthError)
 def handle_auth_error(ex):
     response = jsonify(ex.error)
     response.status_code = ex.status_code
     return response
 
 
-@App.errorhandler(GenericError)
+@app.errorhandler(GenericError)
 def handle_generic_error(ex):
     response = jsonify(ex.error)
     response.status_code = ex.status_code

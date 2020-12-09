@@ -14,9 +14,9 @@ flask-script = "*"
 flask-migrate = "*"
 psycopg2-binary = "*"
 flask-cors = "*"
-jose = "*"
 python-dotenv = "*"
 pylint = "*"
+python-jose = "*"
 
 [requires]
 python_version = "3.8"
